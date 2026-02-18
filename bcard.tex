@@ -8,12 +8,22 @@
 %
 \documentclass[10pt,oneside,final]{article}
 
+%\def\yesbleed{}
+%\def\yesbleedguide{}
+
+\usepackage{calc} % needed for math
+\newlength{\width}\setlength{\width}{3.5in}
+\newlength{\height}\setlength{\height}{2in}
+\ifdefined\yesbleed
+    \newlength{\bleed}\setlength{\bleed}{0.125in}
+\else
+    \newlength{\bleed}\setlength{\bleed}{0in}
+\fi
+
 % set all margins to 0 and set business card size
-\def\width{3.5in}
-\def\height{2in}
 \usepackage[
-    paperwidth=\width,
-    paperheight=\height,
+    paperwidth=\width+2\bleed,
+    paperheight=\height+2\bleed,
     margin=0cm,
     noheadfoot,
 ]{geometry}
@@ -71,20 +81,43 @@
     \begin{center}
     \begin{tikzpicture}
         % hacky, but this will cover the whole page
-        \node(card) [
+        \node(bg) [
             %fill=blue,
-            minimum width=\width,
-            minimum height=\height,
+            minimum width=\width+2*\bleed,
+            minimum height=\height+2*\bleed,
         ] {};
 
         % add a bit of color
-        \node(top) [
+        \node(bgtop) [
             fill=bgi,
-            minimum width=\width,
+            minimum width=\width+2*\bleed,
             %minimum height=0.382*\height,
-            minimum height=0.333*\height+\icoscale,
+            minimum height=0.333*\height+\bleed+\icoscale,
             anchor=north west,
-        ] at (card.north west) {};
+        ] at (bg.north west) {};
+
+        % this defines the card geometry, ignoring bleeds
+        \node(card) [
+            minimum width=\width,
+            minimum height=\height,
+            anchor=north west,
+        ] at ($(bg.north west)+(\bleed,-\bleed)$) {};
+
+        % some bleed guides to help editing
+        \ifdefined\yesbleedguide
+            \node [
+                draw,
+                minimum width=\width,
+                minimum height=\height,
+                anchor=north west,
+            ] at (card.north west) {};
+            \node [
+                draw, dashed,
+                minimum width=\width-2*\bleed,
+                minimum height=\height-2*\bleed,
+                anchor=north west,
+            ] at ($(card.north west)+(\bleed,-\bleed)$) {};
+        \fi
 
         % main ico
         \node(ico) [
@@ -104,7 +137,7 @@
             inner ysep=\descsep,
             minimum width=0,
             minimum height=0,
-        ] at ({$(card.east)-(\descpad,0)$} |- top.south) {
+        ] at ({$(card.east)-(\descpad,0)$} |- bgtop.south) {
             {\Large \bf Christopher Haster}%
         };
         \node(desc) [
@@ -145,21 +178,45 @@
     \begin{center}
     \begin{tikzpicture}
         % hacky, but this will cover the whole page
-        \node(card) [
+        \node(bg) [
             %fill=blue,
-            minimum width=\width,
-            minimum height=\height,
+            minimum width=\width+2*\bleed,
+            minimum height=\height+2*\bleed,
         ] {};
 
         % add a bit of color
-        \node(top) [
+        \node(bgtop) [
             fill=bgi,
-            minimum width=\width,
+            minimum width=\width+2*\bleed,
             %minimum height=0.382*\height,
-            minimum height=0.333*\height+\icoscale,
+            minimum height=0.333*\height+\bleed+\icoscale,
             anchor=north west,
-        ] at (card.north west) {};
+        ] at (bg.north west) {};
 
+        % this defines the card geometry, ignoring bleeds
+        \node(card) [
+            minimum width=\width,
+            minimum height=\height,
+            anchor=north west,
+        ] at ($(bg.north west)+(\bleed,-\bleed)$) {};
+
+        % some bleed guides to help editing
+        \ifdefined\yesbleedguide
+            \node [
+                draw,
+                minimum width=\width,
+                minimum height=\height,
+                anchor=north west,
+            ] at (card.north west) {};
+            \node [
+                draw, dashed,
+                minimum width=\width-2*\bleed,
+                minimum height=\height-2*\bleed,
+                anchor=north west,
+            ] at ($(card.north west)+(\bleed,-\bleed)$) {};
+        \fi
+
+      % mirror!
       \begin{scope}[transform canvas={xscale=-1}]
         % main ico
         \node(ico) [
@@ -194,7 +251,7 @@ END:VCARD}
             inner ysep=\descsep,
             minimum width=0,
             minimum height=0,
-        ] at ({$(card.east)-(\descpad,0)$} |- top.south) {
+        ] at ({$(card.east)-(\descpad,0)$} |- bgtop.south) {
             {\Large \bf Christopher Haster}%
         };
         \node(desc) [
