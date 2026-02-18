@@ -1,0 +1,231 @@
+% !TeX program=lualatex
+% !TEX TS-program = xelatex
+% ^-- lol I have no idea what these do :)
+
+% Based on:
+% - https://olivierpieters.be/blog/2017/02/11/designing-a-business-card-in-latex
+% - https://github.com/opieters/business-card/tree/master
+%
+\documentclass[10pt,oneside,final]{article}
+
+% set all margins to 0 and set business card size
+\def\width{3.5in}
+\def\height{2in}
+\usepackage[
+    paperwidth=\width,
+    paperheight=\height,
+    margin=0cm,
+    noheadfoot,
+]{geometry}
+\setlength{\baselineskip}{0cm}
+\setlength{\topskip}{0pt}
+
+% times roman, including math (where possible)
+\usepackage{mathptmx}
+% hopefully embeds all fonts in pd
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{pslatex}
+% more compact and arguably nicer
+\usepackage[kerning,spacing]{microtype}
+
+\usepackage{parskip}        % remove paragraph indents
+\usepackage{tikz}           % drawing
+\usepackage{xcolor}         % more colour options
+
+% qr code things
+\usepackage{graphics}
+\usepackage[nolinks]{qrcode}
+
+
+% load and configure tikz libraries
+\usetikzlibrary{
+    matrix,
+    calc,
+    positioning,
+}
+
+% define some lengths for internal spacing
+\newlength{\icoscale}\setlength{\icoscale}{3pt}
+\newlength{\icopad}\setlength{\icopad}{4.5\icoscale}
+\newlength{\descpad}\setlength{\descpad}{4.5\icoscale}
+\newlength{\descsep}\setlength{\descsep}{2pt}
+
+% colour options
+\definecolor{bgi}{HTML}{e4bc7f}
+\definecolor{bgii}{HTML}{da8447}
+
+% change global colour
+%\makeatletter
+%\newcommand{\globalcolor}[1]{%
+%  \color{#1}\global\let\default@color\current@color
+%}
+%\makeatother
+%\AtBeginDocument{\globalcolor{textcolour}}
+
+\begin{document}
+
+    \thispagestyle{empty}
+    % uncomment to center vertically
+    %\vspace*{\fill}
+    \begin{center}
+    \begin{tikzpicture}
+        % hacky, but this will cover the whole page
+        \node(card) [
+            %fill=blue,
+            minimum width=\width,
+            minimum height=\height,
+        ] {};
+
+        % add a bit of color
+        \node(top) [
+            fill=bgi,
+            minimum width=\width,
+            %minimum height=0.382*\height,
+            minimum height=0.333*\height+\icoscale,
+            anchor=north west,
+        ] at (card.north west) {};
+
+        % main ico
+        \node(ico) [
+            anchor=west,
+            %draw,
+        ] at ($(card.west)+(\icopad-\icoscale,0)$) {%
+            \def\littlefsicoscale{\icoscale}%
+            \input{littlefs-ico}%
+        };
+
+        % name and stuff
+        \node(name) [
+            anchor=south east,
+            align=left,
+            %draw,
+            inner sep=0,
+            inner ysep=\descsep,
+            minimum width=0,
+            minimum height=0,
+        ] at ({$(card.east)-(\descpad,0)$} |- top.south) {
+            {\Large \bf Christopher Haster}%
+        };
+        \node(desc) [
+            anchor=north west,
+            align=left,
+            %draw,
+            inner xsep=0,
+            inner ysep=\descsep,
+            minimum width=0,
+            minimum height=0,
+        ] at (name.south west) {
+            Software Research Engineer
+        };
+        \node(stuff) [
+            anchor=north east,
+            align=right,
+            %draw,
+            inner xsep=0,
+            inner ysep=\descsep,
+            minimum width=0,
+            minimum height=0,
+        ] at (desc.south -| name.east) {
+            %${\leftarrow}$ Made that thing\\
+            geky@geky.net \\
+            github.com/geky \\
+            linkedin.com/in/geky
+        };
+    \end{tikzpicture}
+    \end{center}
+    % uncomment to center vertically
+    %\vspace*{\fill}
+
+\newpage
+
+    \thispagestyle{empty}
+    % uncomment to center vertically
+    %\vspace*{\fill}
+    \begin{center}
+    \begin{tikzpicture}
+        % hacky, but this will cover the whole page
+        \node(card) [
+            %fill=blue,
+            minimum width=\width,
+            minimum height=\height,
+        ] {};
+
+        % add a bit of color
+        \node(top) [
+            fill=bgi,
+            minimum width=\width,
+            %minimum height=0.382*\height,
+            minimum height=0.333*\height+\icoscale,
+            anchor=north west,
+        ] at (card.north west) {};
+
+      \begin{scope}[transform canvas={xscale=-1}]
+        % main ico
+        \node(ico) [
+            anchor=west,
+            %draw,
+        ] at ($(card.west)+(\icopad-\icoscale,0)$) {%
+            \def\littlefsicoscale{\icoscale}%
+            \input{littlefs-ico-back-2}%
+        };
+        \node(ico-qr) [
+            fill=bgii,
+            inner sep=\icoscale,
+        ] at ($(ico)+(0,-\icoscale)$) {
+            \qrcode[level=M, height=16\icoscale]{BEGIN:VCARD
+VERSION:4.0
+FN:Christopher Haster
+N:Haster;Christopher
+ORG:littlefs
+TITLE:Software Research Engineer
+EMAIL:geky@geky.net
+URL;TYPE=GITHUB:github.com/geky
+URL;TYPE=LINKEDIN:linkedin.com/in/geky
+END:VCARD}
+        };
+
+        % name and stuff
+        \node(name) [
+            anchor=south east,
+            align=left,
+            %draw,
+            inner sep=0,
+            inner ysep=\descsep,
+            minimum width=0,
+            minimum height=0,
+        ] at ({$(card.east)-(\descpad,0)$} |- top.south) {
+            {\Large \bf Christopher Haster}%
+        };
+        \node(desc) [
+            anchor=north west,
+            align=left,
+            %draw,
+            inner xsep=0,
+            inner ysep=\descsep,
+            minimum width=0,
+            minimum height=0,
+        ] at (name.south west) {
+            Software Research Engineer
+        };
+        \node(stuff) [
+            anchor=north east,
+            align=right,
+            %draw,
+            inner xsep=0,
+            inner ysep=\descsep,
+            minimum width=0,
+            minimum height=0,
+        ] at (desc.south -| name.east) {
+            %${\leftarrow}$ Made that thing\\
+            geky@geky.net \\
+            github.com/geky \\
+            linkedin.com/in/geky
+        };
+      \end{scope}
+    \end{tikzpicture}
+    \end{center}
+    % uncomment to center vertically
+    %\vspace*{\fill}
+
+\end{document}

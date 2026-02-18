@@ -1,0 +1,38 @@
+<body style="margin: 0; background: black;">
+<title>bcard</title>
+<link rel="icon" href="/favicon.ico">
+<script>
+    (function() {
+        let filter = '';
+        if (window.location.hash.includes('grayscale')) {
+            filter += ' grayscale(1)';
+        }
+        if (window.location.hash.includes('darkmode')) {
+            filter += ' invert(1) sepia(75%) contrast(75%)';
+        }
+        if (filter) {
+            let body = document.getElementsByTagName('body')[0];
+            body.style.setProperty('filter', filter);
+        }
+    })();
+</script>
+<object data="build/bcard.pdf"
+        type="application/pdf"
+        width="100%" height="100%">
+</object>
+<script>
+    (function() {
+        let ws = new WebSocket('ws://' +  window.location.host);
+        ws.onopen = function() {
+            ws.send('hello!');
+            console.log('websocket connected');
+        }
+        ws.onmessage = function(message) {
+            console.log('websocket recv', message.data);
+            if (message.data == 'reload') {
+                window.location.reload();
+            }
+        }
+    })();
+</script>
+</body>
